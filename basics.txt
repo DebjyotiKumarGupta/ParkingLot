@@ -1,0 +1,16 @@
+OOP Fundamentals Applied
+
+Encapsulation
+Encapsulation means hiding internal state and only exposing behavior through a well-defined public interface. 
+It prevents external code from putting an object into an invalid state.
+
+Good design: spot.assignVehicle(vehicle) — encapsulates the assignment logic, 
+validates state, sets occupied flag atomically.
+
+Abstraction
+Abstraction means exposing only what is necessary — the "what", not the "how". 
+In C++, pure virtual classes (interfaces) provide abstraction.
+
+Inheritance
+Use inheritance to model is-a relationships. Vehicle types share a common interface but behave differently in spot compatibility checks.
+
