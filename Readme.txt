@@ -98,3 +98,20 @@ PaymentProcessor – handles payment execution independently from ticketing and 
 
 These entities are not explicitly mentioned in the noun list, but emerge when applying the 
 Single Responsibility Principle and separating business concerns into dedicated objects.
+
+
+tep-by-step entry execution
+1 Customer arrives. EntryGate receives vehicle details (license plate, type).
+2 EntryGate calls ParkingLot::parkVehicle(vehicle).
+3 ParkingLot iterates floors, calls ParkingFloor::getFreeSpot(vehicleType) on each.
+4 ParkingFloor iterates spots, calls ParkingSpot::canFitVehicle(type) on each unoccupied spot.
+5 First valid spot is returned. ParkingSpot::assignVehicle(vehicle) is called — sets occupied, stores reference.
+6 Ticket is generated with ticketId, spot reference, vehicle reference, entry timestamp.
+7 DisplayBoard notified (Observer). Counts updated. Ticket returned to customer.
+
+1 Customer presents ticket at ExitGate.
+2 TicketService validates: ticket exists, not already paid, not expired.
+3 FeeCalculator computes fee: hours * ratePerHour using the current IPricingStrategy.
+4 ExitGate presents fee. Customer pays via IPaymentProcessor (cash, card, UPI).
+5 On payment success: Ticket marked paid, ParkingSpot freed, DisplayBoard updated.
+6 Gate opens. Vehicle exits.

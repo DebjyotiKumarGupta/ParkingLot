@@ -279,7 +279,16 @@ private:
     Vehicle* vehicle_;
     ParkingSpot* spot_;
     std::chrono::system_clock::time_point entryTime_;
+    TicketState state_{TicketState::ISSUED};
     bool paid_{false};
+
+
+    bool isValidTransition(TicketState from , TicketState to) {
+        if(TicketState::ISSUED == from && TicketState::ACTIVE == to) return true;
+        if(TicketState::ACTIVE == from && TicketState::PAYMENT_PENDING == to) return true;
+        if(TicketState::PAYMENT_PENDING == from && TicketState::CLOSED == to) return true; 
+        return false;
+    }
 
 public:
     Ticket(string id, Vehicle* vehicle , ParkingSpot* spot) :
@@ -318,6 +327,15 @@ public:
         auto now = std::chrono::system_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::duration<double, std::ratio<3600>>>(now - entryTime_);
         return duration.count();
+    }
+
+    bool transitionTo(TicketState newState) {
+        if(!isValidTransition(state_ , newState)){
+            throw std::logic_error("Invalid ticket state transition");
+        }
+        state_ = newState;
+        cout<<"Ticket state changed "<<endl;
+        return true;
     }
 };
 
